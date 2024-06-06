@@ -1,9 +1,13 @@
 package com.example.calculadora
 
+import android.view.View
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.text.Editable
+import android.widget.TextView
+import android.text.TextWatcher
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,6 +19,7 @@ import org.mariuszgromada.math.mxparser.Expression
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var PreviaCalculo: TextView
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +36,10 @@ class MainActivity : AppCompatActivity() {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
+        PreviaCalculo = findViewById(binding.previaContaTextView.id)
+
+
+
         Visor.historicoVisor = binding.historico
         Visor.calculoVisor = binding.calculo
         Visor.resultadoVisor = binding.resultado1
@@ -43,10 +52,10 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.percentual.setOnClickListener {
-
             if (Visor.estaVazio(Visor.calculoVisor)) {
                 Visor.tratamentoSeResultadoInvalido()
-                    Visor.calculoVisor.text = "${Visor.resultadoVisor.text}%*"
+                Visor.calculoVisor.text = "${Visor.resultadoVisor.text}%*"
+                binding.previaContaTextView.text = "teste"
             } else {
                 Visor.limpaVisor(Visor.resultadoVisor)
                 Visor.calculoVisor.text = "${Visor.resultadoVisor.text}%*"
@@ -180,9 +189,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.igual.setOnClickListener {
             val valorExpressao = Expression(Visor.calculoVisor.text.toString()).calculate()
-            val resultadoString = Visor.valorIntOuFloat (Visor.calculoVisor.text.toString())
+            val resultadoString = Visor.valorIntOuFloat(Visor.calculoVisor.text.toString())
 
-            if (valorExpressao.isNaN()){
+            if (valorExpressao.isNaN()) {
                 Visor.resultadoVisor.text = "0"
             }
             binding.resultado1.text = resultadoString
@@ -192,6 +201,14 @@ class MainActivity : AppCompatActivity() {
                 Visor.historicoLista
             )
         }
+    }
+
+
+    fun ocultarPrevia() {
+        if (PreviaCalculo.visibility == View.VISIBLE) {
+            PreviaCalculo.visibility = View.GONE
+        } else
+            PreviaCalculo.visibility = View.VISIBLE
     }
 
     override fun onResume() {
